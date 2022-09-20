@@ -1,0 +1,41 @@
+Function GetFileName() As String
+
+    GetFileName = ""
+    ' Open the file dialog
+    With Application.FileDialog(msoFileDialogOpen)
+        .AllowMultiSelect = False
+        If .Show = -1 Then
+            GetFileName = .SelectedItems(1)
+        End If
+    End With
+
+End Function
+Public Sub copyData()
+    Dim sourceWkb As Workbook
+    Dim sourceWks As Worksheet
+    Dim targetWks As Worksheet
+    Dim sourceFilename As String
+    Dim lastRow As Long
+    Dim lDestLastRow As Long
+
+    Set targetWks = Sheets("Sheet1")
+    sourceFilename = GetFileName
+    Set sourceWkb = Workbooks.Open(sourceFilename)
+    Set sourceWks = sourceWkb.Sheets("Sheet1")
+
+
+    'Past the table in my current Excel file
+    lCopyLastRow = sourceWks.Cells(sourceWks.Rows.Count, "A").End(xlUp).Row
+    
+    lDestLastRow = targetWks.Cells(targetWks.Rows.Count, "A").End(xlUp).Offset(1).Row
+  '  targetWks.Range("A2:C" & lDestLastRow).ClearContents
+    
+    sourceWks.Range("A2:C" & lCopyLastRow).Copy
+    targetWks.Range("A" & lDestLastRow).PasteSpecial Paste:=xlPasteValues
+    
+    'Close Source File.xlsx
+    sourceWkb.Close False
+End Sub
+
+    'lastRow = sourceWks.Range("A1").End(xlDown).Row
+    'targetWks.Range("A1:A" & lastRow) = sourceWks.Range("A1:A" & lastRow).Value
